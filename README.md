@@ -11,7 +11,7 @@ The challenge is pretty simple, tests a few principles:
 
 The Task
 
-> From a common excel sheet of 100,000 records (11 columns). Read the contexts of the file the order the fathers_name column alphabetically --NOT THE RECORD, JUST THE COLUMN--- Insert into a MySQL Database then create a new Excel file with the new reordered data.
+> From a common excel sheet of 100,000 records (11 columns). Read the contents of the file then order the fathers_name column alphabetically --NOT THE RECORD, JUST THE COLUMN--- Insert into a MySQL Database then create a new Excel file with the new reordered data.
 
 Parameters used on judgement day (31st July 2018): 
 
