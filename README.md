@@ -18,7 +18,8 @@ Parameters used on judgement day (31st July 2018):
 * Execution Time 
 * CPU Load
 * Memory usage
-*Code Review on quality
+* Code Review on quality
+
 
 My tools will include: 
 
