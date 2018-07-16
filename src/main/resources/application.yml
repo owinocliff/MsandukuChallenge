@@ -1,0 +1,15 @@
+---
+server:
+  servlet:
+    port: 8087
+    contextPath: /challenge
+---
+
+logging:
+  file: C:\Users\Clifford Owino\Desktop\Challenge\challenge.log
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    org.springframework.web: INFO    
+spring.autoconfigure.exclude : org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
