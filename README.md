@@ -32,6 +32,6 @@ We have 3 other contenders namely:
 
 * [Peter Kinyanjui (NodeJS)](https://github.com/PeterKinyanjui)
 * [Tom Mwenda (Python)](https://github.com/tommwenda)
-* [Cindy Nyongesa (.NET Framework)](https://github.com/)
+* [Cindy Nyongesa (.NET Framework)](https://github.com/lycin)
 
 
