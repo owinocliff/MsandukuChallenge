@@ -16,14 +16,14 @@ public class ExcelRowMapper implements RowMapper<Users> {
         users.setEmpID(rowSet.getColumnValue(0));
         users.setNamePrefix(rowSet.getColumnValue(1));
         users.setFirstName(rowSet.getColumnValue(2));
-        users.setMiddleName(rowSet.getColumnValue(3));
+        users.setMiddleInitial(rowSet.getColumnValue(3));
         users.setLastName(rowSet.getColumnValue(4));
         users.setGender(rowSet.getColumnValue(5));
-        users.setEmail(rowSet.getColumnValue(6));        
+        users.seteMail(rowSet.getColumnValue(6));        
         users.setFatherName(rowSet.getColumnValue(7));
         users.setMotherName(rowSet.getColumnValue(8)); 
         users.setMotherMaidenName(rowSet.getColumnValue(9));
-        users.setDob(rowSet.getColumnValue(10));
+        users.setDateofBirth(rowSet.getColumnValue(10));
 
         return users;
     }

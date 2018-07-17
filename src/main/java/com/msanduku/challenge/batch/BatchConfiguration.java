@@ -22,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  *
@@ -30,13 +33,14 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  */
 @Configuration
 @EnableBatchProcessing
+@EnableAsync
 public class BatchConfiguration {
 
     private final Logger LOG = LoggerFactory.getLogger(this.getClass());
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
 
-    int CHUNK_COUNT = 3;
+    int CHUNK_COUNT = 60000;
 
     int LINES_TO_SKIP = 2;
 
@@ -78,25 +82,23 @@ public class BatchConfiguration {
     public TaskItemProcessor processor() {
         return new TaskItemProcessor();
     }
-
-//https://www.petrikainulainen.net/programming/spring-framework/spring-batch-tutorial-writing-information-to-a-database-with-jdbc/
+//https://www.petrikainulainen.net/programming/spring-framework/spring-batch-tutorial-writing-information-to-a-file/
     @Bean
     public JdbcBatchItemWriter<Users> writer() {
         JdbcBatchItemWriter<Users> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setDataSource(dataSource);
         writer.setSql(QUERY_INSERT_STMT);
-
         ItemSqlParameterSourceProvider<Users> paramProvider = new BeanPropertyItemSqlParameterSourceProvider<>();
-
         writer.setItemSqlParameterSourceProvider(paramProvider);
-
         return writer;
     }
 
     @Bean
     public Step step1() {
-        return stepBuilderFactory.get("step1").<Users, Users>chunk(CHUNK_COUNT)
+        return stepBuilderFactory
+                .get("step1")
+                .<Users, Users>chunk(CHUNK_COUNT)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
@@ -110,6 +112,15 @@ public class BatchConfiguration {
                 .flow(step1())
                 .end()
                 .build();
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(25);
+        return executor;
     }
 
 }

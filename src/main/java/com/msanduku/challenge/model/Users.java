@@ -1,18 +1,5 @@
 package com.msanduku.challenge.model;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -29,13 +16,13 @@ public class Users{
     
     private String firstName;
     
-    private String middleName;
+    private String middleInitial;
     
     private String lastName;
     
     private String gender;
     
-    private String email;
+    private String eMail;
     
     private String fatherName;
     
@@ -43,7 +30,7 @@ public class Users{
     
     private String motherMaidenName;
     
-    private String dob;
+    private String dateofBirth;
 
     public Users() {
     }
@@ -80,13 +67,13 @@ public class Users{
         this.firstName = firstName;
     }
 
-    public String getMiddleName() {
-        return middleName;
+    public String getMiddleInitial() {
+        return middleInitial;
     }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+    public void setMiddleInitial(String middleInitial) {
+        this.middleInitial = middleInitial;
+    }   
 
     public String getLastName() {
         return lastName;
@@ -104,14 +91,16 @@ public class Users{
         this.gender = gender;
     }
 
-    public String getEmail() {
-        return email;
+    public String geteMail() {
+        return eMail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
     }
 
+    
+   
     public String getFatherName() {
         return fatherName;
     }
@@ -136,37 +125,13 @@ public class Users{
         this.motherMaidenName = motherMaidenName;
     }
 
-    public String getDob() {
-        return dob;
+    public String getDateofBirth() {
+        return dateofBirth;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
+    public void setDateofBirth(String dateofBirth) {
+        this.dateofBirth = dateofBirth;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (pKColumn != null ? pKColumn.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Users)) {
-            return false;
-        }
-        Users other = (Users) object;
-        if ((this.pKColumn == null && other.pKColumn != null) || (this.pKColumn != null && !this.pKColumn.equals(other.pKColumn))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.msanduku.challenge.model.Users[ pKColumn=" + pKColumn + " ]";
-    }
-    
+   
 }
