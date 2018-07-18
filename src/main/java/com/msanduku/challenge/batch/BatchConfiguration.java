@@ -2,6 +2,8 @@ package com.msanduku.challenge.batch;
 
 import com.msanduku.challenge.lib.ExcelRowMapper;
 import com.msanduku.challenge.model.Users;
+import java.util.ArrayList;
+import java.util.List;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +14,15 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.ItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.excel.RowMapper;
 import org.springframework.batch.item.excel.poi.PoiItemReader;
+import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,18 +60,17 @@ public class BatchConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost/test");
-        dataSource.setUsername("root");
-        dataSource.setPassword("");
+        final DriverManagerDataSource dataSourceLocal = new DriverManagerDataSource();
+        dataSourceLocal.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSourceLocal.setUrl("jdbc:mysql://localhost/test");
+        dataSourceLocal.setUsername("root");
+        dataSourceLocal.setPassword("");
 
-        return dataSource;
+        return dataSourceLocal;
     }
 
     @Bean
     ItemReader<Users> reader() {
-
         PoiItemReader<Users> reader = new PoiItemReader<>();
         reader.setLinesToSkip(1);
         reader.setResource(new ClassPathResource("100000RecordsFull.xlsx"));
@@ -82,9 +86,24 @@ public class BatchConfiguration {
     public TaskItemProcessor processor() {
         return new TaskItemProcessor();
     }
-//https://www.petrikainulainen.net/programming/spring-framework/spring-batch-tutorial-writing-information-to-a-file/
+
     @Bean
-    public JdbcBatchItemWriter<Users> writer() {
+    public TaskItemWriter fileWriter() {
+        return new TaskItemWriter();
+    }
+
+    @Bean
+    public CompositeItemWriter compositeItemWriter() {
+        CompositeItemWriter<Users> compositeItemWriter = new CompositeItemWriter<>();
+        List<ItemWriter<? super Users>> delegates = new ArrayList<>();
+        delegates.add(dbWriter());
+        delegates.add(fileWriter());
+        compositeItemWriter.setDelegates(delegates);
+        return compositeItemWriter;
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<Users> dbWriter() {
         JdbcBatchItemWriter<Users> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setDataSource(dataSource);
@@ -96,13 +115,16 @@ public class BatchConfiguration {
 
     @Bean
     public Step step1() {
-        return stepBuilderFactory
-                .get("step1")
+
+        TaskletStep processingStep = stepBuilderFactory.get("step1")
                 .<Users, Users>chunk(CHUNK_COUNT)
                 .reader(reader())
                 .processor(processor())
-                .writer(writer())
+                .writer(compositeItemWriter())
+//               .transactionManager(txManager)
                 .build();
+
+        return processingStep;
     }
 
     @Bean
